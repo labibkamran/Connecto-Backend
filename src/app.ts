@@ -5,10 +5,21 @@
 
 import express, { Express } from 'express'
 import swaggerRouter from './docs/swagger'
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { getUserPresence } from './services/presenceService'
+import { getTypingUsers } from './services/typingService'
+import authRouter from './routes/v1/authRoutes'
+import roomRouter from './routes/v1/roomRoutes'
 
 const app: Express = express()
+const COOKIE_SECRET = process.env.COOKIE_SECRET || "dev-cookie-secret-change-me";
 
 app.use(express.json())
+app.use(cors({ origin: '*' }));
+
+
+app.use(cookieParser(COOKIE_SECRET));
 
 app.get('/', (_req, res) => {
 		res.status(200).send(`
@@ -41,6 +52,30 @@ app.get('/health', (_req, res) => {
 	res.status(200).json({ status: 'ok' })
 })
 
+app.get('/presence/:userId', async (req, res) => {
+	const userId = req.params.userId
+	try {
+		const status = await getUserPresence(userId)
+		res.json({ userId, status })
+	} catch (err) {
+		console.error(err)
+		res.status(500).json({ error: 'Failed to get presence' })
+	}
+})
+
+app.get('/typing/:roomId', async (req, res) => {
+	const roomId = req.params.roomId
+	try {
+		const userIds = await getTypingUsers(roomId)
+		res.json({ roomId, typingUsers: userIds })
+	} catch (err) {
+		console.error(err)
+		res.status(500).json({ error: 'Failed to get typing users' })
+	}
+})
+
+app.use('/api/auth', authRouter)
+app.use('/api/rooms', roomRouter)
 app.use('/docs', swaggerRouter)
 
 export default app

@@ -1,12 +1,14 @@
 /*
 	src/server.ts
-	Purpose: Create and start the HTTP server using the configured Express app.
+	Purpose: Create and start the HTTP server and Socket.IO WebSocket server using the configured Express app.
 */
 
 import http from 'http'
 import dotenv from 'dotenv'
 import app from './app'
 import connectToDatabase from './config/db'
+import { initRedis } from './redisClient'
+import { initializeSocketServer } from './ws/socketServer'
 
 dotenv.config()
 
@@ -14,9 +16,13 @@ const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
 
 async function start(): Promise<void> {
 	await connectToDatabase()
-	const server = http.createServer(app)
-	server.listen(PORT, () => {
-		console.log(`Server listening on port ${PORT}`)
+	await initRedis()
+	const httpServer = http.createServer(app)
+
+	initializeSocketServer(httpServer)
+
+	httpServer.listen(PORT, () => {
+		console.log(`Connecto API Gateway + WebSockets on port ${PORT}`)
 	})
 }
 

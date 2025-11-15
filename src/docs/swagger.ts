@@ -18,30 +18,11 @@ const spec = swaggerJSDoc({
     info: {
       title: 'Backend API',
       version: process.env.npm_package_version || '1.0.0',
-      description: 'Auto-generated API documentation'
+      description: 'Auto-generated API documentation',
     },
-    servers: [
-      { url: `http://localhost:${process.env.PORT}` }
-    ],
-    paths: {
-      '/health': {
-        get: {
-          summary: 'Health check',
-          responses: {
-            '200': {
-              description: 'OK',
-              content: {
-                'application/json': {
-                  schema: { type: 'object', properties: { status: { type: 'string' } } }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    servers: [{ url: `http://localhost:${process.env.PORT || 3000}` }],
   },
-  apis: []
+  apis: ['src/routes/**/*.ts', 'src/controllers/**/*.ts', 'src/app.ts'],
 })
 
 router.use('/', swaggerUi.serve, swaggerUi.setup(spec))
