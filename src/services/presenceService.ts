@@ -1,6 +1,7 @@
 // src/services/presenceService.ts
 import { redisClient } from "../redisClient";
 
+const PRESENCE_KEY_PREFIX = 'presence:'
 const PRESENCE_TTL_SECONDS = 10;
 
 export async function setUserOnline(userId: string): Promise<void> {
@@ -9,6 +10,11 @@ export async function setUserOnline(userId: string): Promise<void> {
   });
 }
 
+export async function isUserOnline(userId: string): Promise<boolean> {
+	const key = `${PRESENCE_KEY_PREFIX}${userId}`
+	const value = await redisClient.get(key)
+	return value === 'online'
+}
 export async function getUserPresence(userId: string): Promise<"online" | "offline"> {
   const val = await redisClient.get(`presence:${userId}`);
   return val === "online" ? "online" : "offline";

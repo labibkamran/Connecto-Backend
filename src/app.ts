@@ -11,6 +11,12 @@ import { getUserPresence } from './services/presenceService'
 import { getTypingUsers } from './services/typingService'
 import authRouter from './routes/v1/authRoutes'
 import roomRouter from './routes/v1/roomRoutes'
+import messageRoutes from './routes/v1/messageRoutes'
+import unreadRoutes from './routes/v1/unreadRoutes'
+
+
+
+
 
 const app: Express = express()
 const COOKIE_SECRET = process.env.COOKIE_SECRET || "dev-cookie-secret-change-me";
@@ -76,7 +82,9 @@ app.get('/typing/:roomId', async (req, res) => {
 
 app.use('/api/auth', authRouter)
 app.use('/api/rooms', roomRouter)
+app.use('/api/messages', messageRoutes)
 app.use('/docs', swaggerRouter)
+app.use('/api/unread', unreadRoutes)
 
 export default app
 

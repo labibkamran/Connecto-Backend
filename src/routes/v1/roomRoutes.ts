@@ -1,16 +1,26 @@
-// src/routes/roomRoutes.ts
-import { Router } from "express";
+/*
+	src/routes/roomRoutes.ts
+	Purpose: Define HTTP routes for room-related operations, including listing rooms, DMs, group creation, and group admin actions.
+*/
+
+import { Router } from 'express'
+import { requireAuth } from '../../middleware/authMiddleware'
 import {
-  createGroup,
-  listMyRooms,
-  startDm,
-} from "../../controllers/v1/roomController";
-import { requireAuth } from "../../middleware/authMiddleware";
+	createGroup,
+	listMyRooms,
+	startDm,
+	addMember,
+	removeMember,
+	renameGroup,
+} from '../../controllers/v1/roomController'
 
-const roomRouter = Router();
+const router = Router()
 
-roomRouter.get("/", requireAuth, listMyRooms);
-roomRouter.post("/dm", requireAuth, startDm);
-roomRouter.post("/group", requireAuth, createGroup);
+router.get('/', requireAuth, listMyRooms)
+router.post('/dm', requireAuth, startDm)
+router.post('/group', requireAuth, createGroup)
+router.post('/:roomId/members', requireAuth, addMember)
+router.delete('/:roomId/members/:userId', requireAuth, removeMember)
+router.patch('/:roomId', requireAuth, renameGroup)
 
-export default roomRouter;
+export default router

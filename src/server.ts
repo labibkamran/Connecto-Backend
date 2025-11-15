@@ -17,6 +17,7 @@ const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
 async function start(): Promise<void> {
 	await connectToDatabase()
 	await initRedis()
+
 	const httpServer = http.createServer(app)
 
 	initializeSocketServer(httpServer)
