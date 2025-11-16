@@ -6,9 +6,10 @@
 import { Router } from 'express'
 import { requireAuth } from '../../middleware/authMiddleware'
 import { getRoomMessages } from '../../controllers/v1/messageController'
+import { me } from '../../controllers/v1/authController'
 
-const router = Router()
+const messageRouter = Router()
 
-router.get('/:roomId', requireAuth, getRoomMessages)
+messageRouter.get('/:roomId', requireAuth, getRoomMessages)
 
-export default router
+export default messageRouter

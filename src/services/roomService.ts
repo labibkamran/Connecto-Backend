@@ -7,8 +7,15 @@ import { Types } from 'mongoose'
 import { Room, IRoom } from '../models/Room'
 import { User } from '../models/User'
 
-export async function getUserRooms(userId: string): Promise<IRoom[]> {
-	return Room.find({ 'members.user': userId }).sort({ createdAt: -1 }).exec()
+export async function getUserRooms(userId: string): Promise<any[]> {
+	return Room.find({ 'members.user': userId })
+		.populate({
+			path: 'members.user',
+			select: 'name email',
+		})
+		.sort({ updatedAt: -1 })
+		.lean()
+		.exec()
 }
 
 async function ensureUsersExist(userIds: string[]): Promise<void> {

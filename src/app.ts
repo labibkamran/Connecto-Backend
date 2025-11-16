@@ -11,9 +11,9 @@ import { getUserPresence } from './services/presenceService'
 import { getTypingUsers } from './services/typingService'
 import authRouter from './routes/v1/authRoutes'
 import roomRouter from './routes/v1/roomRoutes'
-import messageRoutes from './routes/v1/messageRoutes'
-import unreadRoutes from './routes/v1/unreadRoutes'
-
+import userRouter from './routes/v1/userRoutes'
+import unreadRouter from './routes/v1/unreadRoutes';
+import messageRouter from './routes/v1/messageRoutes';
 
 
 
@@ -22,7 +22,10 @@ const app: Express = express()
 const COOKIE_SECRET = process.env.COOKIE_SECRET || "dev-cookie-secret-change-me";
 
 app.use(express.json())
-app.use(cors({ origin: '*' }));
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 
 
 app.use(cookieParser(COOKIE_SECRET));
@@ -82,9 +85,10 @@ app.get('/typing/:roomId', async (req, res) => {
 
 app.use('/api/auth', authRouter)
 app.use('/api/rooms', roomRouter)
-app.use('/api/messages', messageRoutes)
+app.use('/api/messages', messageRouter)
 app.use('/docs', swaggerRouter)
-app.use('/api/unread', unreadRoutes)
+app.use('/api/users', userRouter)
+app.use('/api/unread', unreadRouter)
 
 export default app
 

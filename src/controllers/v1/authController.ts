@@ -1,6 +1,6 @@
 // src/controllers/authController.ts
 import { Request, Response } from "express";
-import { loginUser, registerUser, getCurrentUser } from "../../services/authService";
+import { loginUser, registerUser, getCurrentUser, logoutUser } from "../../services/authService";
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || 'connecto_session';
 
@@ -68,6 +68,29 @@ export async function me(req: Request, res: Response) {
     if (err.message === "Invalid or expired session" || err.message === "User not found") {
       return res.status(401).json({ error: "Not authenticated" });
     }
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+export async function logout(req: Request, res: Response) {
+  try {
+    const sessionId = req.signedCookies[process.env.SESSION_COOKIE_NAME!];
+
+    if (!sessionId) {
+      return res.status(200).json({ message: "Already logged out" });
+    }
+
+    await logoutUser(sessionId);
+
+    res.clearCookie(process.env.SESSION_COOKIE_NAME!, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      signed: true
+    });
+
+    res.json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error("Logout error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 }

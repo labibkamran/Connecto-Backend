@@ -7,6 +7,7 @@ import { CookieOptions } from 'express'
 import { User, type IUser } from '../models/User'
 import { hashPassword, verifyPassword } from '../utils/password'
 import { createSession } from './cookieSessionService'
+import { deleteSession } from "./cookieSessionService";
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || 'connecto_session'
 const SESSION_COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
@@ -95,4 +96,7 @@ export async function getCurrentUser(sessionId: string): Promise<IUser> {
   }
 
   return user
+}
+export async function logoutUser(sessionId: string) {
+  await deleteSession(sessionId);
 }

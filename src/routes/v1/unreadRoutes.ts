@@ -7,8 +7,8 @@ import { Router } from 'express'
 import { requireAuth } from '../../middleware/authMiddleware'
 import { getUnreadSummary } from '../../controllers/v1/unreadController'
 
-const router = Router()
+const unreadRouter = Router()
 
-router.get('/', requireAuth, getUnreadSummary)
+unreadRouter.get('/', requireAuth, getUnreadSummary)
 
-export default router
+export default unreadRouter
